@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,9 @@ public class TimeTestController {
     private final ZoneId sydneyId = ZoneId.of("Australia/Sydney");
     private final ZoneId seoulId = ZoneId.of("Asia/Seoul");
 
+    private final ZoneOffset seoulOffset = ZoneOffset.ofHours(9);
+    private final ZoneOffset sydneyOffset = ZoneOffset.ofHours(10);
+
     @PostMapping
     public ResponseEntity<?> registerTime() {
         TimeTest time = createTime();
@@ -31,25 +35,25 @@ public class TimeTestController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getTimeInfo() {
-        List<TimeTest> results = timeTestRepository.findAll();
+    public ResponseEntity<?> getTimeInfoWithConvertedZoneId() {
+        List<TimeTest> results = getTimes();
         List<TimeTestResponse> responseList = new ArrayList<>();
         for (TimeTest result : results) {
-//            ZonedDateTime seoulTime = result.getSeoulTime();
-//            System.out.println("seoulTime = " + seoulTime);
-//            ZonedDateTime sydneyTime = result.getSydneyTime();
-//            System.out.println("sydneyTime = " + sydneyTime);
-//            System.out.println("sydneyTime.getOffset() = " + sydneyTime.getOffset());
-
             TimeTestResponse timeTestResponse = TimeTestResponse.builder()
                     .seoulLocalDateTime(result.getSeoulLocalTime())
                     .sydneyLocalDateTime(result.getSydneyLocalTime())
-                    .seoulZonedDateTime(result.getSeoulTime())
-                    .sydneyZonedDateTime(result.getSydneyTime())
+                    .seoulOffsetDateTime(result.getSeoulOffsetTime().withOffsetSameInstant(seoulOffset))
+                    .sydneyOffsetDateTime(result.getSydneyOffsetTime().withOffsetSameInstant(sydneyOffset))
+                    .seoulZonedDateTime(result.getSeoulTime().withZoneSameInstant(seoulId))
+                    .sydneyZonedDateTime(result.getSydneyTime().withZoneSameInstant(sydneyId))
                     .build();
             responseList.add(timeTestResponse);
         }
         return ResponseEntity.ok(responseList);
+    }
+
+    private List<TimeTest> getTimes() {
+        return timeTestRepository.findAll();
     }
 
     private TimeTest createTime() {

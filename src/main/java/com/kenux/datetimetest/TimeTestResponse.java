@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
 @Data
@@ -15,6 +16,9 @@ import java.time.ZonedDateTime;
 public class TimeTestResponse {
     LocalDateTime seoulLocalDateTime;
     LocalDateTime sydneyLocalDateTime;
+
+    OffsetDateTime seoulOffsetDateTime;
+    OffsetDateTime sydneyOffsetDateTime;
 
     ZonedDateTime seoulZonedDateTime;
     ZonedDateTime sydneyZonedDateTime;
