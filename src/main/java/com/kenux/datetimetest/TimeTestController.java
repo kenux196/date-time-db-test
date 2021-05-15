@@ -25,6 +25,7 @@ public class TimeTestController {
     @PostMapping
     public ResponseEntity<?> registerTime() {
         TimeTest time = createTime();
+        System.out.println("time = " + time);
         TimeTest save = timeTestRepository.save(time);
         return ResponseEntity.ok("saved : " + save);
     }
